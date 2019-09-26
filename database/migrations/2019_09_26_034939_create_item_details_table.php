@@ -15,8 +15,8 @@ class CreateItemDetailsTable extends Migration
     {
         Schema::create('item_details', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('item_id');
-            $table->foreign('item_id')->references('id')->on('items');
+            $table->unsignedBigInteger('item_id');
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             $table->string('filename');
             $table->timestamps();
         });

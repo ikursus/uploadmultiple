@@ -17,42 +17,27 @@ class UploadController extends Controller
     public function uploadSubmit(Request $request)
     {
         $this->validate($request, [
-        'name' => 'required',
-        'photos'=>'required',
+            'name' => 'required',
+            'photos.*'=>'required|file|mimes:jpeg,bmp,png,pdf,docx',
         ]);
-        if($request->hasFile('photos'))
+
+        // Pertamanya, cipta rekod untuk items.
+        $item = Item::create($request->only('name'));
+
+        // Setelah selesai cipta rekod items, cipta pula rekod untuk setiap item_details
+        $files = $request->file('photos');
+
+        foreach($files as $file)
         {
-            $allowedfileExtension=['pdf','jpg','png','docx'];
-            $files = $request->file('photos');
-            foreach($files as $file)
-            {
             $filename = $file->getClientOriginalName();
-            $extension = $file->getClientOriginalExtension();
-            $check=in_array($extension,$allowedfileExtension);
-            //dd($check);
-                if($check)
-                {
-                    $items= Item::create($request->all());
 
-                    //dd( $items);
-                    foreach ($request->photos as $photo) 
-                    {
-                        $filename = $photo->store('photos');
-                        ItemDetails::create([
-                        'item_id' => $items->id,
-                        'filename' => $filename
-                        ]); 
-                        
-                        echo "Upload Successfully";
-                    }
-                       
-                }else
-                {
-                    echo '<div class="alert alert-warning"><strong>Warning!</strong> Sorry Only Upload png , jpg , doc</div>';
-                }
-            }
+            $filename = $file->store('photos');
+
+            $item->details()->create([
+                'filename' => $filename
+            ]);
         }
+
+        return 'Upload Successfully';
     }
-
-
 }
