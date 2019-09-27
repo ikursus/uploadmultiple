@@ -9,6 +9,13 @@ use App\ItemDetails;
 
 class UploadController extends Controller
 {
+    public function show($id)
+    {
+        $item = Item::findOrFail($id);
+
+        return view('item', compact('item'));
+    }
+
     public function uploadForm()
     {
         return view('upload_form');
@@ -31,7 +38,7 @@ class UploadController extends Controller
         {
             $filename = $file->getClientOriginalName();
 
-            $filename = $file->store('photos');
+            $filename = $file->store('photos', 'public');
 
             $item->details()->create([
                 'filename' => $filename

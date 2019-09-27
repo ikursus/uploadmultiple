@@ -18,6 +18,8 @@ Route::get('/', function () {
 
 Route::resource('vendors', 'VendorController');
 
+Route::get('/item/{id}', 'UploadController@show');
+
 
 Route::get('/multipleuploads', 'UploadController@uploadForm');
 
